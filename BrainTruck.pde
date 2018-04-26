@@ -3,7 +3,7 @@ int boxWidth;
 ArrayList<Integer> tape = new ArrayList<Integer>();
 
 int index=0;
-boolean fs=false;
+boolean fs=true;
 boolean debug=true;
 boolean movLeft=false;
 boolean movRight=false;
@@ -25,35 +25,15 @@ void settings(){
 
 void setup(){
   boxWidth=int(float(width)/12.8);
-  font=createFont("Arial", fontSize);
+  font=createFont("FSEX300.ttf", fontSize);
   textFont(font, fontSize);
   textMode(SHAPE);
   noSmooth();
   mouseX=width/2;
   mouseY=height/2;
   editor= new Editor();
-}
-
-class Editor{
-  ArrayList<String> code;
-  int active;
-  int margin=36;
-  Editor(){
-    code = new ArrayList<String>();
-    code.add("");
-  }
-  void display(){
-    translate(0,0,30);
-    fill(0,0,0,30);
-    rect((width/3)*2, margin, (width/3)-(margin*1.5), height-(margin*2));
-    fill(255,255,255,30);
-    rect((width/3)*2, margin, (width/3)-(margin*1.5), height-(margin*2));
-    for(int i=0; i<code.size(); i++){
-      noStroke();
-      fill(0,0,0);
-      //rect((width/3)*2, margin, (width/3)-margin, height-(margin*2));
-    }
-  }
+  //String[] fontList = PFont.list(); //get list of fonts from system
+  //printArray(fontList); //print list of fonts
 }
 
 void renderTape(){
@@ -96,7 +76,7 @@ void renderTape(){
       text(tape.get(i+index),(boxWidth/2)-20,(-boxWidth/2)+30,1);
       if(i==0){
         textSize(72);
-        text("↓", -16, -boxWidth);
+        text("↓", -16, (-boxWidth*2)/3);
       }
     }
     translate(boxWidth/2,0,0);

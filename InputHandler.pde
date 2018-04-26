@@ -5,13 +5,28 @@ void keyPressed(){
       movRight=true;
       timeStep=1;
     }
-    if(keyCode==LEFT){
+    else if(keyCode==LEFT){
       if(index>0){
         index--;
         movLeft=true;
         timeStep=1;
       }
     }
+    else if(keyCode==UP){
+      editor.moveUp();
+    }
+    else if(keyCode==DOWN){
+      editor.moveDown();
+    }
+  }
+  if(key>=32&&key<127){ //reasonable portion of ascii table
+    editor.add(key);
+  }
+  else if(key==BACKSPACE){
+    editor.delete();
+  }
+  else if(key==ENTER){
+    editor.newLine();
   }
 }
 
