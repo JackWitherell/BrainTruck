@@ -9,8 +9,10 @@ boolean movLeft=false;
 boolean movRight=false;
 boolean adding=false;
 boolean subbing=false;
+boolean outputting=false;
+boolean inputFail=false;
 float timeStep=1;
-float timeScale=.07;
+float timeScale=.15;
 float tapeTilt=.0465;
 PFont font;
 int fontSize=32;
@@ -18,6 +20,8 @@ int margin=36;
 String input="";
 String output="";
 int ref=0;
+String inputHold="";
+ArrayList<Integer> whileStack = new ArrayList<Integer>();
 
 void settings(){
   if(fs){
@@ -112,10 +116,19 @@ void draw(){
   }
   
   fill(255);
+  if(inputFail){
+    stroke(255,0,0);
+  }
   rect(margin*1.5,.75*height,((float(2)/3)*width)-(margin*2)-5,38);
   fill(0);
   textSize(32);
-  text(input+(focus==1?"←":""),(margin*1.5),(.75*height)+27);
+  if(focus>=2){
+    text(inputHold,(margin*1.5),(.75*height)+27);
+  }
+  else{
+    text(input+(focus==1?"←":""),(margin*1.5),(.75*height)+27);
+  }
+  stroke(0);
   fill(255);
   rect(margin*1.5,(.75*height)+45,width/6,height-((.75*height)+45+(margin)));
   textSize(138);
@@ -132,20 +145,26 @@ void draw(){
     }
   }
   text("RUN",(margin*1.5)-2,height-48);
-  
+  textSize(50);
+  fill(0);
+  if(outputting){
+    text("out> "+output,(margin*1.5)+(width/6)+30,height-98-(20*timeStep));
+  }
+  else{
+    text("out> "+output,(margin*1.5)+(width/6)+30,height-98);
+  }
   if(timeStep<0){
-    movLeft=movRight=adding=subbing=false;
+    movLeft=movRight=adding=subbing=outputting=inputFail=false;
     timeStep=0;
   }
   else if(timeStep>0){
     timeStep-=timeScale;
   }
-  
   if(lex.size()==ref){
     //end of tape
     focus=0;
+    ref=0;
   }
-  
   if(focus>=2){
     run();
   }

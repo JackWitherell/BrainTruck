@@ -64,6 +64,8 @@ void mouseReleased(){
       printArray(lex);
       ref=0;
       tape.removeAll(tape);
+      output="";
+      inputHold=input;
       index=0;
       focus=2;
     }
