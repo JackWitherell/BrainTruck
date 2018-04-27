@@ -3,16 +3,21 @@ int boxWidth;
 ArrayList<Integer> tape = new ArrayList<Integer>();
 
 int index=0;
-boolean fs=true;
+boolean fs=false;
 boolean debug=true;
 boolean movLeft=false;
 boolean movRight=false;
+boolean adding=false;
+boolean subbing=false;
 float timeStep=1;
-float timeScale=.20;
+float timeScale=.07;
 float tapeTilt=.0465;
 PFont font;
 int fontSize=32;
-Editor editor;
+int margin=36;
+String input="";
+String output="";
+int ref=0;
 
 void settings(){
   if(fs){
@@ -32,17 +37,20 @@ void setup(){
   mouseX=width/2;
   mouseY=height/2;
   editor= new Editor();
+  strokeWeight(2);
+  hint(DISABLE_DEPTH_TEST);
   //String[] fontList = PFont.list(); //get list of fonts from system
   //printArray(fontList); //print list of fonts
 }
 
 void renderTape(){
   pushMatrix();
-  translate((width/2),(height/2),0);
+  translate((width/3),(height/2),0);
   rotateY(((float(mouseX)/width)-0.5)*.2);
   rotateX(((float(mouseY)/height)-0.5)*.4);
-  if(tape.size()<index+13){ //Ensure Focused Quantity of Tape can be rendered
-    for(int i=0; i<13; i++){
+  int drop=0;
+  if(tape.size()<index+53){ //Ensure Focused Quantity of Tape can be rendered
+    for(int i=0; i<53; i++){
       tape.add(0);
     }
   }
@@ -55,25 +63,26 @@ void renderTape(){
     translate((-boxWidth/2)*timeStep,0,0);
     rotateY(-tapeTilt*timeStep);
     translate((-boxWidth/2)*timeStep,0,0);
-    timeStep-=timeScale;
   }
   if(movRight){
     translate((boxWidth/2)*timeStep,0,0);
     rotateY(tapeTilt*timeStep);
     translate((boxWidth/2)*timeStep,0,0);
-    timeStep-=timeScale;
   }
-  if(timeStep<0){
-    movLeft=movRight=false;
+  if(adding){
+    drop=int(timeStep*30);
   }
-  for(int i=-12;i<13;i++){ //rotate forwards while rendering
+  else if(subbing){
+    drop=int(-timeStep*30);
+  }
+  for(int i=-12;i<53;i++){ //rotate forwards while rendering
     if(0-index<=i){ //only print box if the tape has started
       fill(255);
       stroke(0);
       rect(-.5*boxWidth,-.5*boxWidth,boxWidth,boxWidth);
       fill(0);
       textSize(32);
-      text(tape.get(i+index),(boxWidth/2)-20,(-boxWidth/2)+30,1);
+      text(tape.get(i+index),(-boxWidth/2)+1,5-(i==0?drop:0),1);
       if(i==0){
         textSize(72);
         text("↓", -16, (-boxWidth*2)/3);
@@ -83,13 +92,15 @@ void renderTape(){
     rotateY(tapeTilt);
     translate(boxWidth/2,0,0);
   }
+  fill(255);
+  box(boxWidth+50);
   popMatrix();
 }
 
 void debug(){
   textSize(72);
   fill(0);
-  text("meme"+index+" "+((float(mouseX)/width)-0.5), 50, 80, 0);
+  text("v0.04 i."+index+" r."+ref+" a."+timeStep, 50, 80, 0);
 }
 
 void draw(){
@@ -98,5 +109,44 @@ void draw(){
   editor.display();
   if(debug){
     debug();
+  }
+  
+  fill(255);
+  rect(margin*1.5,.75*height,((float(2)/3)*width)-(margin*2)-5,38);
+  fill(0);
+  textSize(32);
+  text(input+(focus==1?"←":""),(margin*1.5),(.75*height)+27);
+  fill(255);
+  rect(margin*1.5,(.75*height)+45,width/6,height-((.75*height)+45+(margin)));
+  textSize(138);
+  fill(0);
+  
+  if(mouseX>18&&mouseX<((width/6)+34)){
+    if(mouseY>(.75*height)+56&&mouseY<height-16){
+      if(!mousePressed){
+        fill(255,0,0);
+      }
+      else{
+        fill(200,0,0);
+      }
+    }
+  }
+  text("RUN",(margin*1.5)-2,height-48);
+  
+  if(timeStep<0){
+    movLeft=movRight=adding=subbing=false;
+    timeStep=0;
+  }
+  else if(timeStep>0){
+    timeStep-=timeScale;
+  }
+  
+  if(lex.size()==ref){
+    //end of tape
+    focus=0;
+  }
+  
+  if(focus>=2){
+    run();
   }
 }

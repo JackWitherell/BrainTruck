@@ -1,32 +1,52 @@
+int focus=0;
+
 void keyPressed(){
-  if(key==CODED){
-    if(keyCode==RIGHT){
-      index++;
-      movRight=true;
-      timeStep=1;
-    }
-    else if(keyCode==LEFT){
-      if(index>0){
-        index--;
-        movLeft=true;
+  if(focus==0){
+    if(key==CODED){
+      if(keyCode==RIGHT){
+        index++;
+        movRight=true;
         timeStep=1;
       }
+      else if(keyCode==LEFT){
+        if(index>0){
+          index--;
+          movLeft=true;
+          timeStep=1;
+        }
+      }
+      else if(keyCode==UP){
+        editor.moveUp();
+      }
+      else if(keyCode==DOWN){
+        editor.moveDown();
+      }
     }
-    else if(keyCode==UP){
-      editor.moveUp();
+    if(key>=32&&key<127){ //reasonable portion of ascii table
+      editor.add(key);
     }
-    else if(keyCode==DOWN){
-      editor.moveDown();
+    else if(key==BACKSPACE){
+      editor.delete();
+    }
+    else if(key==ENTER){
+      editor.newLine();
     }
   }
-  if(key>=32&&key<127){ //reasonable portion of ascii table
-    editor.add(key);
+  else if(focus==1){
+    if(key>=32&&key<127){
+      input+=key;
+    }
+    else if(key==BACKSPACE){
+      if(input.length()!=0){
+        input=input.substring(0,input.length()-1);
+      }
+    }
   }
-  else if(key==BACKSPACE){
-    editor.delete();
-  }
-  else if(key==ENTER){
-    editor.newLine();
+  if(key==TAB){
+    focus++;
+    if(focus>=2){
+      focus=0;
+    }
   }
 }
 
@@ -34,5 +54,18 @@ void mouseWheel(MouseEvent event){
   index+=event.getCount();
   if(index<0){
     index=0;
+  }
+}
+
+void mouseReleased(){
+  if(mouseX>18&&mouseX<((width/6)+34)){
+    if(mouseY>(.75*height)+56&&mouseY<height-16){
+      println("started!");
+      printArray(lex);
+      ref=0;
+      tape.removeAll(tape);
+      index=0;
+      focus=2;
+    }
   }
 }
