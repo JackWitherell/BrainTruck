@@ -1,4 +1,30 @@
 int focus=0;
+boolean ctrl=false;
+
+import java.awt.datatransfer.*;
+import java.awt.*;
+String getClipboard(){
+  String out;
+  try{
+    Clipboard c=Toolkit.getDefaultToolkit().getSystemClipboard();
+    out=(String)c.getData(DataFlavor.stringFlavor);
+  }
+  catch(IOException e){
+    out="";
+  }
+  catch(UnsupportedFlavorException e){
+    out="";
+  }
+  return out;
+}
+
+void keyReleased(){
+  if(key==CODED){
+    if(keyCode==CONTROL){
+      ctrl=false;
+    }
+  }
+}
 
 void keyPressed(){
   if(focus==0){
@@ -21,15 +47,35 @@ void keyPressed(){
       else if(keyCode==DOWN){
         editor.moveDown();
       }
+      if(keyCode==CONTROL){
+        ctrl=true;
+      }
     }
-    if(key>=32&&key<127){ //reasonable portion of ascii table
-      editor.add(key);
+    if(ctrl){
+      if(key==22){
+        String paste=getClipboard();
+        for(int i=0; i<paste.length(); i++){
+          char in=paste.charAt(i);
+          if(in>=32&&in<=127){
+            println(in);
+            editor.add(in);
+          }
+          else if(String.valueOf(in).matches("\n")){
+            editor.newLine();
+          }
+        }
+      }
     }
-    else if(key==BACKSPACE){
-      editor.delete();
-    }
-    else if(key==ENTER){
-      editor.newLine();
+    else{
+      if(key>=32&&key<127){ //reasonable portion of ascii table
+        editor.add(key);
+      }
+      else if(key==BACKSPACE){
+        editor.delete();
+      }
+      else if(key==ENTER){
+        editor.newLine();
+      }
     }
   }
   else if(focus==1){
